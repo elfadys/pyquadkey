@@ -1,7 +1,8 @@
 from util import precondition
-from math import sin, cos, atan, exp, log, pi
+from math import pi
 import numpy as np
 import pandas as pd
+
 
 def valid_level(level):
     LEVEL_RANGE = (1, 23)
@@ -43,7 +44,7 @@ class TileSystem:
     def ground_resolution(lat, level):
         """Gets ground res in meters / pixel"""
         lat = TileSystem.clip(lat, TileSystem.LATITUDE_RANGE)
-        return cos(lat * pi / 180) * 2 * pi * TileSystem.EARTH_RADIUS / TileSystem.map_size(level)
+        return np.cos(lat * pi / 180) * 2 * pi * TileSystem.EARTH_RADIUS / TileSystem.map_size(level)
 
     @staticmethod
     @precondition(lambda lat, lvl, dpi: valid_level(lvl))
@@ -100,7 +101,6 @@ class TileSystem:
         """Transform tile coordinates to a quadkey"""
         tile_x = tile[:,0]
         tile_y = tile[:,1]
-        # quadkey = np.zeros((1,len(tile_x)),dtype=np.uint64)
         quadkey = pd.DataFrame("'",index=np.arange(len(tile)),columns=['qk'])
         for i in range(level):
             bit = level - i
@@ -115,8 +115,8 @@ class TileSystem:
     @staticmethod
     def quadkey_to_tile(quadkey):
         """Transform quadkey to tile coordinates"""
-        tile_x  = np.zeros((len(quadkey),1)).astype(int)
-        tile_y  = np.zeros((len(quadkey),1)).astype(int)
+        tile_x = np.zeros((len(quadkey),1)).astype(int)
+        tile_y = np.zeros((len(quadkey),1)).astype(int)
         level = len(quadkey[0])
         qk = pd.DataFrame(quadkey,columns=['qk'])
         
